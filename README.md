@@ -1,9 +1,27 @@
 # Entrepreneurship Business Game
 
-**An interactive Streamlit app for running a multi‑tab entrepreneurship simulation**, covering persona development, problem analysis, ideation, market sizing, and a final pitch recap.
+An interactive **Streamlit** app that simulates a 5‑step entrepreneurship workshop:
 
-## How to run locally
+1. **Persona Development**  
+2. **Problem Analysis (Fishbone)**  
+3. **Ideation & Value Proposition**  
+4. **Market Opportunity Sizing**  
+5. **Pitch Recap**
 
-1. Install dependencies:
+Each step scores your team’s inputs, lets you download your session state, and pick up where you left off.
+
+---
+
+## 🚀 Live Demo
+
+Deployed on Streamlit Community Cloud:
+https://business-game-9cdgmjqxtkkjbz7havb79d.streamlit.app/
+
+---
+
+## 🔧 Local Setup
+
+1. **Clone the repo**  
    ```bash
-   pip install -r requirements.txt
+   git clone https://github.com/gfolo/business-game.git
+   cd business-game
