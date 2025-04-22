@@ -85,10 +85,14 @@ for i in range(5):
     members.append(m)
 st.sidebar.markdown('---')
 
-# Load previous session (import)
 # Sidebar: Load / Reset
 st.sidebar.markdown(":green[Upload Previous Session]")
-uploaded = st.sidebar.file_uploader("Load session file", type="json", key="load_session")
+uploaded = st.sidebar.file_uploader(
+    "Load session file", 
+    type="json", 
+    key="load_session"
+)
+
 if uploaded is not None:
     try:
         raw  = uploaded.read()
@@ -106,6 +110,7 @@ if uploaded is not None:
         else:
             st.sidebar.warning("⚠️ No valid keys found to restore.")
 
+# Start Over button (unique key!)
 if st.sidebar.button("🔄 Start Over", key="start_over_sidebar"):
     for key in list(st.session_state.keys()):
         del st.session_state[key]
