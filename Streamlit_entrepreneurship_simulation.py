@@ -112,8 +112,11 @@ if uploaded is not None:
 
 # Start Over button (unique key!)
 if st.sidebar.button("🔄 Start Over", key="start_over_sidebar"):
-    for key in list(st.session_state.keys()):
-        del st.session_state[key]
+    # Only delete our saved keys, not Streamlit internals
+    for k in SAVE_KEYS:
+        if k in st.session_state:
+            del st.session_state[k]
+    # Now trigger a rerun
     st.experimental_rerun()
 
 # Tabs for each exercise
