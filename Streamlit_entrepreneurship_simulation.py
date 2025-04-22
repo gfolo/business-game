@@ -3,6 +3,13 @@ import random
 import re
 import json
 
+# Keys we’ll persist in session files
+SAVE_KEYS = [
+    'persona_name','problem_statement','primary_causes','all_root_causes',
+    'vp_product','som_value',
+    'score_persona','score_analysis','score_ideation','score_sizing','score_pitch'
+]
+
 # ----------------------------------------
 # Helper and Evaluation Functions
 # ----------------------------------------
@@ -79,15 +86,27 @@ for i in range(5):
 st.sidebar.markdown('---')
 
 # Load previous session (import)
+# Sidebar: Load / Reset
 st.sidebar.markdown(":green[Upload Previous Session]")
-uploaded = st.sidebar.file_uploader("Load session file", type="json")
-if uploaded:
-    data = json.load(uploaded)
-    for k, v in data.items():
-        st.session_state[k] = v
+uploaded = st.sidebar.file_uploader("Load session file", type="json", key="load_session")
+if uploaded is not None:
+    try:
+        raw  = uploaded.read()
+        data = json.loads(raw)
+    except Exception as e:
+        st.sidebar.error(f"❌ Could not parse JSON: {e}")
+    else:
+        restored = []
+        for k in SAVE_KEYS:
+            if k in data:
+                st.session_state[k] = data[k]
+                restored.append(k)
+        if restored:
+            st.sidebar.success(f"✅ Restored: {', '.join(restored)}")
+        else:
+            st.sidebar.warning("⚠️ No valid keys found to restore.")
 
-# Start Over button
-if st.sidebar.button("🔄 Start Over", key="start_over"):
+if st.sidebar.button("🔄 Start Over", key="start_over_sidebar"):
     for key in list(st.session_state.keys()):
         del st.session_state[key]
     st.experimental_rerun()
@@ -308,7 +327,8 @@ with tabs[4]:
     st.subheader(f"🎯 **Overall Score:** {overall:.1f}/100")
 
 # Footer
-state = { k: st.session_state[k] for k in st.session_state.keys() }
+# Download session at bottom of page
+state = {k: st.session_state[k] for k in SAVE_KEYS if k in st.session_state}
 st.download_button(
     label="💾 Download Session",
     data=json.dumps(state),
