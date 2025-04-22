@@ -120,61 +120,62 @@ tabs = st.tabs([
 # --------- Exercise 1: Persona Development ---------
 with tabs[0]:
     st.header('Exercise 1: Persona Development')
+    
     with st.form('persona_form'):
-    name = st.text_input(
-        'Name',
-        value=st.session_state.get('persona_name',''),
-        key='persona_name'
-    )
-    age = st.text_input(
-        'Age',
-        value=st.session_state.get('age',''),
-        key='age'
-    )
-    gender = st.text_input(
-        'Gender',
-        value=st.session_state.get('gender',''),
-        key='gender'
-    )
-    location = st.text_input(
-        'Location',
-        value=st.session_state.get('location',''),
-        key='location'
-    )
-    st.markdown('**Beyond demographics:**')
-    values = st.text_area(
-        'Values & Motivations',
-        value=st.session_state.get('values',''),
-        key='values'
-    )
-    behaviors = st.text_area(
-        'Key Behaviors',
-        value=st.session_state.get('behaviors',''),
-        key='behaviors'
-    )
-    jobs = st.text_area(
-        'Jobs to be Done',
-        value=st.session_state.get('jobs',''),
-        key='jobs'
-    )
-    pains = st.text_area(
-        'Pains',
-        value=st.session_state.get('pains',''),
-        key='pains'
-    )
-    gains = st.text_area(
-        'Gains',
-        value=st.session_state.get('gains',''),
-        key='gains'
-    )
-    motto = st.text_input(
-        'Persona Motto / Quote',
-        value=st.session_state.get('motto',''),
-        key='motto'
-    )
-    submit_p = st.form_submit_button('Submit Persona')
+        name = st.text_input(
+            'Name',
+            value=st.session_state.get('persona_name',''),
+            key='persona_name'
+        )
+        age = st.text_input(
+            'Age',
+            value=st.session_state.get('age',''),
+            key='age'
+        )
+        gender = st.text_input(
+            'Gender',
+            value=st.session_state.get('gender',''),
+            key='gender'
+        )
+        location = st.text_input(
+            'Location',
+            value=st.session_state.get('location',''),
+            key='location'
+        )
+        st.markdown('**Beyond demographics:**')
+        values = st.text_area(
+            'Values & Motivations',
+            value=st.session_state.get('values',''),
+            key='values'
+        )
+        behaviors = st.text_area(
+            'Key Behaviors',
+            value=st.session_state.get('behaviors',''),
+            key='behaviors'
+        )
+        jobs = st.text_area(
+            'Jobs to be Done',
+            value=st.session_state.get('jobs',''),
+            key='jobs'
+        )
+        pains = st.text_area(
+            'Pains',
+            value=st.session_state.get('pains',''),
+            key='pains'
+        )
+        gains = st.text_area(
+            'Gains',
+            value=st.session_state.get('gains',''),
+            key='gains'
+        )
+        motto = st.text_input(
+            'Persona Motto / Quote',
+            value=st.session_state.get('motto',''),
+            key='motto'
+        )
+        submit_p = st.form_submit_button('Submit Persona')
 
-    if submit_p:
+if submit_p:
         st.session_state['persona_name'] = name
         persona = {'values': values, 'behaviors': behaviors}
         score   = evaluate_persona(persona)
@@ -270,43 +271,43 @@ with tabs[2]:
     all_causes = [c for c in primaries + roots if c.strip()]
 
     with st.form('ideation_form'):
-    product = st.text_input(
-        'Our',
-        value=st.session_state.get('vp_product',''),
-        key='vp_product',
-        placeholder='Products and Services'
-    )
-    segment = st.text_input(
-        'help(s)',
-        value=st.session_state.get('segment',''),
-        key='segment',
-        placeholder='Customer Segment'
-    )
-    job = st.text_input(
-        'who wants to',
-        value=st.session_state.get('job',''),
-        key='job',
-        placeholder='Jobs to be Done'
-    )
-    pain_full = st.text_input(
-        'by',
-        value=st.session_state.get('pain_full',''),
-        key='pain_full',
-        placeholder='Verb (e.g. reducing) + a customer pain'
-    )
-    gain_full = st.text_input(
-        'and',
-        value=st.session_state.get('gain_full',''),
-        key='gain_full',
-        placeholder='Verb (e.g. enabling) + a customer gain'
-    )
-    alternative = st.text_input(
-        'unlike',
-        value=st.session_state.get('alternative',''),
-        key='alternative',
-        placeholder='Competing Proposition'
-    )
-    submit_i = st.form_submit_button('Submit Value Proposition')
+        product = st.text_input(
+            'Our',
+            value=st.session_state.get('vp_product',''),
+            key='vp_product',
+            placeholder='Products and Services'
+        )
+        segment = st.text_input(
+            'help(s)',
+            value=st.session_state.get('segment',''),
+            key='segment',
+            placeholder='Customer Segment'
+        )
+        job = st.text_input(
+            'who wants to',
+            value=st.session_state.get('job',''),
+            key='job',
+            placeholder='Jobs to be Done'
+        )
+        pain_full = st.text_input(
+            'by',
+            value=st.session_state.get('pain_full',''),
+            key='pain_full',
+            placeholder='Verb (e.g. reducing) + a customer pain'
+        )
+        gain_full = st.text_input(
+            'and',
+            value=st.session_state.get('gain_full',''),
+            key='gain_full',
+            placeholder='Verb (e.g. enabling) + a customer gain'
+        )
+        alternative = st.text_input(
+            'unlike',
+            value=st.session_state.get('alternative',''),
+            key='alternative',
+            placeholder='Competing Proposition'
+        )
+        submit_i = st.form_submit_button('Submit Value Proposition')
 
     if submit_i:
         st.session_state['vp_product'] = product
