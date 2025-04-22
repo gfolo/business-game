@@ -121,19 +121,58 @@ tabs = st.tabs([
 with tabs[0]:
     st.header('Exercise 1: Persona Development')
     with st.form('persona_form'):
-        name      = st.text_input('Name')
-        age       = st.text_input('Age')
-        gender    = st.text_input('Gender')
-        location  = st.text_input('Location')
-        st.markdown('**Beyond demographics:**')
-        values    = st.text_area('Values & Motivations')
-        behaviors = st.text_area('Key Behaviors')
-        # context fields
-        jobs      = st.text_area('Jobs to be Done')
-        pains     = st.text_area('Pains')
-        gains     = st.text_area('Gains')
-        motto     = st.text_input('Persona Motto / Quote')
-        submit_p  = st.form_submit_button('Submit Persona')
+    name = st.text_input(
+        'Name',
+        value=st.session_state.get('persona_name',''),
+        key='persona_name'
+    )
+    age = st.text_input(
+        'Age',
+        value=st.session_state.get('age',''),
+        key='age'
+    )
+    gender = st.text_input(
+        'Gender',
+        value=st.session_state.get('gender',''),
+        key='gender'
+    )
+    location = st.text_input(
+        'Location',
+        value=st.session_state.get('location',''),
+        key='location'
+    )
+    st.markdown('**Beyond demographics:**')
+    values = st.text_area(
+        'Values & Motivations',
+        value=st.session_state.get('values',''),
+        key='values'
+    )
+    behaviors = st.text_area(
+        'Key Behaviors',
+        value=st.session_state.get('behaviors',''),
+        key='behaviors'
+    )
+    jobs = st.text_area(
+        'Jobs to be Done',
+        value=st.session_state.get('jobs',''),
+        key='jobs'
+    )
+    pains = st.text_area(
+        'Pains',
+        value=st.session_state.get('pains',''),
+        key='pains'
+    )
+    gains = st.text_area(
+        'Gains',
+        value=st.session_state.get('gains',''),
+        key='gains'
+    )
+    motto = st.text_input(
+        'Persona Motto / Quote',
+        value=st.session_state.get('motto',''),
+        key='motto'
+    )
+    submit_p = st.form_submit_button('Submit Persona')
 
     if submit_p:
         st.session_state['persona_name'] = name
@@ -147,7 +186,7 @@ with tabs[0]:
         else:
             st.success("Excellent persona! You've provided very rich detail.")
 
-# --------- Exercise 2: Problem Analysis (Fishbone) ---------
+# # --------- Exercise 2: Problem Analysis (Fishbone) ---------
 with tabs[1]:
     st.header('Exercise 2: Problem Analysis (Fishbone)')
     st.markdown(
@@ -155,31 +194,57 @@ with tabs[1]:
         'and up to 4 root causes under each.'
     )
 
+    # Pre‑load saved lists (or defaults)
+    saved_prim = st.session_state.get('primary_causes', [''] * 4)
+    saved_secs = {
+        i: st.session_state.get(f'root_secs_{i}', [''] * 4)
+        for i in range(4)
+    }
+
     with st.form('analysis_form'):
-        problem = st.text_input('Problem Statement')
+        problem = st.text_input(
+            'Problem Statement',
+            value=st.session_state.get('problem_statement', ''),
+            key='problem_statement'
+        )
+
         st.markdown('**Primary Causes (up to 4)**')
         cols = st.columns(4)
         primary_causes = []
         for i, col in enumerate(cols):
             with col:
-                pc = st.text_input(f'Primary #{i+1}', key=f'pc{i}')
+                pc = st.text_input(
+                    f'Primary #{i+1}',
+                    value=saved_prim[i],
+                    key=f'primary_causes_{i}'
+                )
                 primary_causes.append(pc)
+
         st.markdown('**Secondary (Root) Causes (up to 4 per primary)**')
         root_cols = []
-        for i, pc in enumerate(primary_causes):
-            col = cols[i]
+        for i, col in enumerate(cols):
             with col:
-                st.markdown(f'**Roots of “{pc or "(empty)"}”**')
+                st.markdown(f'**Roots of “{primary_causes[i] or "(empty)"}”**')
                 secs = []
                 for j in range(4):
-                    sec = st.text_input(f'Root #{j+1}', key=f'sec_{i}_{j}')
+                    sec = st.text_input(
+                        f'Root #{j+1}',
+                        value=saved_secs[i][j],
+                        key=f'root_secs_{i}_{j}'
+                    )
                     secs.append(sec)
                 root_cols.append(secs)
+
         submit_a = st.form_submit_button('Submit Analysis')
+
         if submit_a and problem.strip():
+            # 1) Save problem
             st.session_state['problem_statement'] = problem
-            st.session_state['primary_causes']      = primary_causes
-            st.session_state['all_root_causes']     = [c for col in root_cols for c in col]
+            # 2) Save primaries as a list of 4
+            st.session_state['primary_causes'] = primary_causes
+            # 3) Save each list of secondaries
+            for i, secs in enumerate(root_cols):
+                st.session_state[f'root_secs_{i}'] = secs
 
     if submit_a:
         score = evaluate_analysis(root_cols)
@@ -205,19 +270,43 @@ with tabs[2]:
     all_causes = [c for c in primaries + roots if c.strip()]
 
     with st.form('ideation_form'):
-        product     = st.text_input('Our',    placeholder='Products and Services')
-        segment     = st.text_input('help(s)',placeholder='Customer Segment')
-        job         = st.text_input('who wants to', placeholder='Jobs to be Done')
-        pain_full   = st.text_input(
-                         'by',
-                         placeholder='Verb (e.g. reducing) + a customer pain'
-                      )
-        gain_full   = st.text_input(
-                         'and',
-                         placeholder='Verb (e.g. enabling) + a customer gain'
-                      )
-        alternative = st.text_input('unlike', placeholder='Competing Proposition')
-        submit_i    = st.form_submit_button('Submit Value Proposition')
+    product = st.text_input(
+        'Our',
+        value=st.session_state.get('vp_product',''),
+        key='vp_product',
+        placeholder='Products and Services'
+    )
+    segment = st.text_input(
+        'help(s)',
+        value=st.session_state.get('segment',''),
+        key='segment',
+        placeholder='Customer Segment'
+    )
+    job = st.text_input(
+        'who wants to',
+        value=st.session_state.get('job',''),
+        key='job',
+        placeholder='Jobs to be Done'
+    )
+    pain_full = st.text_input(
+        'by',
+        value=st.session_state.get('pain_full',''),
+        key='pain_full',
+        placeholder='Verb (e.g. reducing) + a customer pain'
+    )
+    gain_full = st.text_input(
+        'and',
+        value=st.session_state.get('gain_full',''),
+        key='gain_full',
+        placeholder='Verb (e.g. enabling) + a customer gain'
+    )
+    alternative = st.text_input(
+        'unlike',
+        value=st.session_state.get('alternative',''),
+        key='alternative',
+        placeholder='Competing Proposition'
+    )
+    submit_i = st.form_submit_button('Submit Value Proposition')
 
     if submit_i:
         st.session_state['vp_product'] = product
@@ -259,32 +348,49 @@ with tabs[3]:
         'Estimate your TAM by number of users (in millions) × willingness to pay ($), '
         'then set your SAM and SOM percentages. A random market scenario will adjust your SOM.'
     )
+
+    # Pre‑load saved inputs or defaults
+    people_m_saved    = st.session_state.get('people_m', 0.0)
+    willingness_saved = st.session_state.get('willingness', 0.0)
+    sam_pct_saved     = st.session_state.get('sam_pct', 20)
+    som_pct_saved     = st.session_state.get('som_pct', 10)
+
     with st.form('sizing_form'):
-        people_m    = st.number_input('Number of people (millions)', min_value=0.0, format="%.2f")
-        willingness = st.number_input('Willingness to pay per person ($/year)', min_value=0.0, format="%.2f")
-        sam_pct     = st.slider('SAM (% of TAM)', 0, 100, 20)
-        som_pct     = st.slider('SOM (% of SAM)', 0, 100, 10)
-        submit_s    = st.form_submit_button('Submit Sizing')
+        people_m = st.number_input(
+            'Number of people (millions)',
+            min_value=0.0,
+            format="%.2f",
+            value=people_m_saved,
+            key='people_m'
+        )
+        willingness = st.number_input(
+            'Willingness to pay per person ($/year)',
+            min_value=0.0,
+            format="%.2f",
+            value=willingness_saved,
+            key='willingness'
+        )
+        sam_pct = st.slider(
+            'SAM (% of TAM)',
+            0, 100,
+            value=sam_pct_saved,
+            key='sam_pct'
+        )
+        som_pct = st.slider(
+            'SOM (% of SAM)',
+            0, 100,
+            value=som_pct_saved,
+            key='som_pct'
+        )
+        submit_s = st.form_submit_button('Submit Sizing')
+
     if submit_s:
+        # Core calculations with ±20% noise
         base_tam = people_m * willingness  # million-$
         noise    = random.uniform(0.8, 1.2)
         tam      = base_tam * noise
         sam      = tam * sam_pct / 100
         som      = sam * som_pct / 100
-
-        st.markdown(f"**TAM Estimate:** {tam:.2f} M-$")
-        st.markdown(f"**SAM:** {sam:.2f} M-$")
-        st.markdown(f"**SOM:** {som:.2f} M-$")
-
-        # Outlier warnings
-        if base_tam < 5:
-            st.warning('TAM below 5 M—market may be too small.')
-        if base_tam > 20000:
-            st.warning('TAM above 20 B—check assumptions.')
-        if sam_pct > 50:
-            st.warning('SAM above 50% may be unrealistic.')
-        if som_pct > 50:
-            st.warning('SOM above 50% may be unrealistic.')
 
         # Random market scenario
         scenarios = [
@@ -295,36 +401,66 @@ with tabs[3]:
             ("Incumbent losing traction, customers seeking alternatives (+30%)", 0.3),
             ("Positive regulation alignment, lucky you (+20%)", 0.2),
         ]
-        desc, factor = random.choice(scenarios)
-        adjusted_som = som * (1 + factor)
-        st.markdown(f"**Scenario:** {desc}")
-        st.markdown(f"**Adjusted SOM:** {adjusted_som:.2f} M-$")
-        st.session_state['som_value'] = adjusted_som
+        desc, factor     = random.choice(scenarios)
+        adjusted_som     = som * (1 + factor)
 
-# --------- Exercise 5: Workshop Recap ---------
+        # Display results
+        st.markdown(f"**TAM Estimate:** {tam:.2f} M-$")
+        st.markdown(f"**SAM:** {sam:.2f} M-$")
+        st.markdown(f"**SOM:** {som:.2f} M-$")
+        st.markdown(f"**Scenario:** {desc}")
+        st.markdown(f"**Adjusted SOM:** {adjusted_som:.2f} M-$")
+
+        # Warnings for outliers
+        if base_tam < 5:
+            st.warning('TAM below 5 M—market may be too small.')
+        if base_tam > 20000:
+            st.warning('TAM above 20 B—check assumptions.')
+        if sam_pct > 50:
+            st.warning('SAM above 50% may be unrealistic.')
+        if som_pct > 50:
+            st.warning('SOM above 50% may be unrealistic.')
+
+        # Persist inputs and adjusted SOM
+        st.session_state['people_m']    = people_m
+        st.session_state['willingness'] = willingness
+        st.session_state['sam_pct']     = sam_pct
+        st.session_state['som_pct']     = som_pct
+        st.session_state['som_value']   = adjusted_som
+
+# # --------- Exercise 5: Pitch Recap ---------
 with tabs[4]:
     st.header('Exercise 5: Pitch Recap')
+
     st.subheader('🔍 Problem to Solve')
     st.write(st.session_state.get('problem_statement', '—'))
+
     st.subheader('👤 Target Customer Persona')
     st.write(st.session_state.get('persona_name', '—'))
+
     st.subheader('💡 Proposed Solution')
     st.write(st.session_state.get('vp_product', '—'))
-    st.subheader('📈 Market Size (SOM)')
+
+    st.subheader('📈 Market Size (Adjusted SOM)')
     st.write(f"{st.session_state.get('som_value', 0):.2f} M-$")
+
     st.markdown('---')
-    st.header('📊 Individual Scores')
-    scores = {
-        'Persona':  st.session_state.get('score_persona', 0),
-        'Analysis': st.session_state.get('score_analysis', 0),
-        'Ideation': st.session_state.get('score_ideation', 0),
-        'Pitch':    st.session_state.get('score_pitch', 0)
-    }
-    for name, val in scores.items():
-        st.write(f"**{name}:** {val}/100")
-    overall = sum(scores.values()) / len(scores)
+    st.header('📊 Scores')
+
+    # Pull the three core scores
+    p_score = st.session_state.get('score_persona', 0)
+    a_score = st.session_state.get('score_analysis', 0)
+    i_score = st.session_state.get('score_ideation', 0)
+
+    # Display individual scores
+    st.write(f"**Persona:** {p_score:.1f}/100")
+    st.write(f"**Analysis:** {a_score:.1f}/100")
+    st.write(f"**Ideation:** {i_score:.1f}/100")
+
+    # Compute and display Total Pitch Score (average of the three)
+    pitch_score = (p_score + a_score + i_score) / 3
     st.markdown('---')
-    st.subheader(f"🎯 **Overall Score:** {overall:.1f}/100")
+    st.subheader(f"🎯 Total Pitch Score: {pitch_score:.1f}/100")
 
 # Footer
 # Download session at bottom of page
